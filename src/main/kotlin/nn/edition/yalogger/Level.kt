@@ -3,7 +3,7 @@ package nn.edition.yalogger
 class Level(
     name: String,
     value: Int,
-    color: String,
+    val color: String,
 ): java.util.logging.Level(name, value) {
     companion object {
         @JvmStatic
