@@ -2,12 +2,13 @@ package nn.edition.yalogger
 
 import java.io.PrintStream
 
-object TerraPrintStream : PrintStream(System.out) {
+object YALPrintStream : PrintStream(System.out) {
+    private val logger = LoggerFactory.getLogger("STDOUT")
 
     private fun process(x: Any?) {
-//        CloudLogger.warning("<yellow>Do not use STDOUT for printing to console.")
-//
-//        CloudLogger.info(x.toString())
+        logger.warn("<yellow>Do not use STDOUT for printing to console.")
+
+        logger.info(x.toString())
     }
 
     override fun print(x: Any?) = process(x)
