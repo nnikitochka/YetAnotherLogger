@@ -4,9 +4,10 @@ import org.slf4j.Logger
 import org.slf4j.Marker
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.format.DateTimeFormatter
+import kotlin.Throwable
 
 class Logger(private val name: String) : Logger {
+    fun isLevelEnabled(level: Level) = level.intValue() <= LoggerFactory.logLevel.intValue()
 
     override fun getName(): String = name
 
@@ -16,7 +17,7 @@ class Logger(private val name: String) : Logger {
         args: Array<out Any?> = arrayOf(),
         throwable: Throwable? = null
     ) {
-        if (!LoggerConfig.isLevelEnabled(level)) return
+        if (!isLevelEnabled(level)) return
 
         val text = when {
             message == null -> "null"
@@ -24,14 +25,15 @@ class Logger(private val name: String) : Logger {
             else -> format(message, args)
         }
 
-        val formattedMessage = LoggerConfig.logFormat
-            .replace("{date}", LocalDate.now().format(DateTimeFormatter.ofPattern(LoggerConfig.dateFormat)))
-            .replace("{time}", LocalTime.now().format(DateTimeFormatter.ofPattern(LoggerConfig.timeFormat)))
-            .replace("{level}", level.name)
-            .replace("{name}", name)
+        val formattedMessage = level.color+LoggerFactory.logFormat
+            .replaceIfExist("{date}") { LocalDate.now().format(LoggerFactory.dateFormatter) }
+            .replaceIfExist("{time}") { LocalTime.now().format(LoggerFactory.timeFormatter) }
+            .replaceIfExist("{level}") { level.name }
+            .replaceIfExist("{trace}") { Throwable().stackTrace.last().let { "${it.className}.${it.lineNumber}" } }
+            .replaceIfExist("{name}") { name }
             .replace("{message}", text)
 
-        LoggerConfig.terminalWriter?.write(formattedMessage) ?: println(formattedMessage)
+        LoggerFactory.terminalWriter?.write(formattedMessage) ?: LoggerFactory.originalOut.println(formattedMessage)
         throwable?.printStackTrace()
     }
 
@@ -136,4 +138,12 @@ class Logger(private val name: String) : Logger {
             }
         }
     }.toString()
+
+    private fun String.replaceIfExist(placeholder: String, replacement: () -> String): String {
+        return if (this.contains(placeholder)) {
+            this.replace(placeholder, replacement.invoke())
+        } else {
+            this
+        }
+    }
 }
