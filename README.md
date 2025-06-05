@@ -8,7 +8,11 @@
     Дискорд сообщество https://dsc.gg/nnedition
     Телеграм канал https://t.me/nnedition
 
-YetAnotherLogger - это минималистичная реализация slf4j-api.
+YetAnotherLogger - это минималистичная реализация slf4j-api с простой конфигурацией.
 
+## Начало работы
+Для начала добавьте зависимость slf4j-api 2.0.17
 
-
+## TODO:
+- [ ] Сохранение логов в файл
+- [ ] Придумать описание для LoggerFactory#terminalWriter
