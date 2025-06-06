@@ -87,6 +87,7 @@ object Main {
 ```
 
 Вывод программы:
+
 ![output.png](images/console_output.png)
 
 ### Настройка
