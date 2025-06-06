@@ -139,11 +139,8 @@ class Logger(private val name: String) : Logger {
         }
     }.toString()
 
-    private fun String.replaceIfExist(placeholder: String, replacement: () -> String): String {
-        return if (this.contains(placeholder)) {
+    private fun String.replaceIfExist(placeholder: String, replacement: () -> String) =
+        if (this.contains(placeholder))
             this.replace(placeholder, replacement.invoke())
-        } else {
-            this
-        }
-    }
+        else this
 }
