@@ -5,14 +5,15 @@ import java.time.format.DateTimeFormatter
 
 object LoggerFactory : ILoggerFactory {
 
-    val originalOut = System.out
     private val loggers = mutableMapOf<String, Logger>()
 
     override fun getLogger(name: String): Logger = loggers.getOrPut(name) { Logger(name) }
 
-    init {
-        System.setOut(YALPrintStream)
-    }
+    val originalOut = System.out
+    val originalErr = System.err
+
+    val yalOut = YALPrintStream(System.out, Level.INFO)
+    val yalErr = YALPrintStream(System.err, Level.ERROR)
 
     /**
      * TODO придумать описание
@@ -35,7 +36,7 @@ object LoggerFactory : ILoggerFactory {
      * {trace} - путь к месту вызова логирования (класс.строка)
      * {message} - сообщение лога
      */
-    var logFormat = "[{date} {time} {level}] {trace} » {message}"
+    var logFormat = "[{date} {time} {level}] ({trace}) » {message}"
 
     /**
      * Формат даты, используемый в плейсхолдере {date}.
@@ -58,7 +59,35 @@ object LoggerFactory : ILoggerFactory {
             field = value
             timeFormatter = DateTimeFormatter.ofPattern(value)
         }
-
     var timeFormatter = DateTimeFormatter.ofPattern(timeFormat)
         private set
+
+    /**
+     * Нужны ли предупреждения об использовании стандартных
+     * методов вывода вместо вывода через логгер?
+     */
+    var stdWarnings: Boolean = false
+
+    /**
+     * Надо ли переопределять стандартные методы
+     * вывода на методы вывода логгера?
+     */
+    var overrideSTD: Boolean = true
+        set(value) {
+            field = value
+            if (value) {
+                System.setOut(yalOut)
+                System.setErr(yalErr)
+            } else {
+                System.setOut(originalOut)
+                System.setOut(originalErr)
+            }
+        }
+
+    init {
+        if (overrideSTD) {
+            System.setOut(yalOut)
+            System.setErr(yalErr)
+        }
+    }
 }
