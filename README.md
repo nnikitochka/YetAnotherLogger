@@ -12,7 +12,7 @@
 
 ## 📦 Немного информации
 
-YetAnotherLogger - это легковесный логгер, реализующий интерфейс `slf4j-api`, без дополнительных зависимостей и сложных конфигураций.
+YetAnotherLogger - это легковесный логгер написанный на `kotlin`, реализующий интерфейс `slf4j-api`, без дополнительных зависимостей и сложных конфигураций.
 Он идеально подходит для небольших проектов, учебных целей или ситуаций, когда требуется простое решение для логирования без использования сторонних библиотек.
 
 ---
@@ -22,11 +22,13 @@ YetAnotherLogger - это легковесный логгер, реализую�
 Выберите подходящею версию из доступного [списка версий](https://github.com/nnikitochka/YetAnotherLogger/releases) и добавьте зависимость в ваш проект:
 
 ### Gradle
-Добавьте следующую зависимость в ваш `build.gradle.kts`:
+
+Добавьте следующие зависимости в ваш `build.gradle.kts`:
+
 ```kt
 repositories {
-    maven("https://jitpack.io")
     mavenCentral()
+    maven("https://jitpack.io")
 }
 
 dependencies {
@@ -37,32 +39,59 @@ dependencies {
 
 
 ### Maven
-Добавьте следующий фрагмент в ваш `pom.xml`:
+
+Добавьте следующие зависимости в ваш `pom.xml`:
 
 ```xml
-<dependency>
-    <groupId>com.github.nnikitochka</groupId>
-    <artifactId>YetAnotherLogger</artifactId>
-    <version>Тэг</version>
-</dependency>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>2.0.17</version>
+    </dependency>
+    <dependency>
+        <groupId>com.github.nnikitochka</groupId>
+        <artifactId>YetAnotherLogger</artifactId>
+        <version>Тэг</version>
+    </dependency>
+</dependencies>
 ```
 
 ### Использование
 
 Пример использования логгера:
 
-```java
-import nn.edition.yalogger.Logger;
-import nn.edition.yalogger.LoggerFactory;
+```kotlin
+import nn.edition.yalogger.LoggerFactory
 
-public class Main {
-    private static final Logger logger = LoggerFactory.getLogger("MainLogger");
+object Main {
+    val logger = LoggerFactory.getLogger("Main")
 
-    public static void main(String[] args) {
-        logger.info("Привет, мир!");
+    @JvmStatic
+    fun main(args: Array<String>) {
+        logger.warn("Это предупреждение!")
+        logger.error("Это ошибка!")
+
+        System.err.println("Это тоже ошибка!")
+
+        println("А это иформационный лог!")
     }
 }
 ```
+
+Вывод программы:
+![output.png](images/console_output.png)
+
+### Настройка
+
+Настройка логгера происходит через статические методы класса `LoggerFactory`
 
 ---
 
