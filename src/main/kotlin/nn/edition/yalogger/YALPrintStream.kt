@@ -1,14 +1,20 @@
 package nn.edition.yalogger
 
+import java.io.OutputStream
 import java.io.PrintStream
 
-object YALPrintStream : PrintStream(System.out) {
+class YALPrintStream(
+    stream: OutputStream,
+    val level: Level
+) : PrintStream(stream) {
+
     private val logger = LoggerFactory.getLogger("STDOUT")
 
     private fun process(x: Any?) {
-        logger.warn("<yellow>Do not use STDOUT for printing to console.")
+        if (LoggerFactory.stdWarnings)
+            logger.warn("Do not use STDOUT for printing to console.")
 
-        logger.info(x.toString())
+        logger.log(level, x.toString())
     }
 
     override fun print(x: Any?) = process(x)
